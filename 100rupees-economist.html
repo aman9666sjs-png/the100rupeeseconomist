@@ -1,0 +1,881 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>The 100 Rupees Economist</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --ink: #0f0e0c;
+    --paper: #f7f3ed;
+    --saffron: #e8820c;
+    --saffron-light: #f5a93a;
+    --saffron-pale: #fdf0dc;
+    --rust: #c4521a;
+    --cream: #faf7f2;
+    --muted: #7a7060;
+    --border: #e0d9ce;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--cream);
+    color: var(--ink);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  /* ── NOISE TEXTURE OVERLAY ── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 1000;
+    opacity: 0.5;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.2rem 3rem;
+    background: rgba(247, 243, 237, 0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .nav-logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--ink);
+    text-decoration: none;
+    letter-spacing: -0.02em;
+  }
+
+  .nav-logo span { color: var(--saffron); }
+
+  .nav-links {
+    display: flex;
+    gap: 2.5rem;
+    list-style: none;
+  }
+
+  .nav-links a {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .nav-links a:hover { color: var(--saffron); }
+
+  /* ── HERO ── */
+  .hero {
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    padding-top: 5rem;
+  }
+
+  .hero-left {
+    padding: 5rem 3rem 5rem 3rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    border-right: 1px solid var(--border);
+    animation: fadeUp 0.9s ease both;
+  }
+
+  .hero-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--saffron);
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .hero-tag::before {
+    content: '';
+    display: block;
+    width: 2rem;
+    height: 1px;
+    background: var(--saffron);
+  }
+
+  .hero-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(3rem, 5vw, 5.5rem);
+    font-weight: 900;
+    line-height: 1.0;
+    letter-spacing: -0.03em;
+    margin-bottom: 1.5rem;
+    color: var(--ink);
+  }
+
+  .hero-title em {
+    font-style: italic;
+    color: var(--saffron);
+  }
+
+  .hero-sub {
+    font-size: 1.05rem;
+    color: var(--muted);
+    max-width: 420px;
+    line-height: 1.75;
+    margin-bottom: 2.5rem;
+  }
+
+  .hero-cta {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .btn-primary {
+    background: var(--saffron);
+    color: white;
+    padding: 0.8rem 1.8rem;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.2s;
+  }
+
+  .btn-primary:hover { background: var(--rust); transform: translateY(-1px); }
+
+  .btn-ghost {
+    background: transparent;
+    color: var(--ink);
+    padding: 0.8rem 1.8rem;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    text-decoration: none;
+    border: 1px solid var(--ink);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .btn-ghost:hover { background: var(--ink); color: white; }
+
+  .hero-right {
+    padding: 5rem 3rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 2rem;
+    animation: fadeUp 0.9s 0.2s ease both;
+  }
+
+  .hero-stat {
+    padding: 1.5rem 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .hero-stat:first-child { border-top: 1px solid var(--border); }
+
+  .stat-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 3.5rem;
+    font-weight: 900;
+    color: var(--saffron);
+    line-height: 1;
+    margin-bottom: 0.3rem;
+  }
+
+  .stat-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  /* ── MARQUEE ── */
+  .marquee-wrap {
+    background: var(--ink);
+    overflow: hidden;
+    padding: 0.9rem 0;
+    border-top: 2px solid var(--saffron);
+  }
+
+  .marquee-track {
+    display: flex;
+    gap: 0;
+    animation: marquee 25s linear infinite;
+    white-space: nowrap;
+  }
+
+  .marquee-item {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--saffron-light);
+    padding: 0 3rem;
+    flex-shrink: 0;
+  }
+
+  .marquee-dot {
+    color: var(--rust);
+    margin: 0 0.5rem;
+  }
+
+  @keyframes marquee {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+
+  /* ── ABOUT STRIP ── */
+  .about-strip {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    min-height: 70vh;
+    border-top: 1px solid var(--border);
+  }
+
+  .about-text {
+    padding: 5rem 3rem;
+    border-right: 1px solid var(--border);
+  }
+
+  .section-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--saffron);
+    margin-bottom: 2rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  .about-headline {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 3vw, 3rem);
+    font-weight: 700;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    margin-bottom: 1.5rem;
+  }
+
+  .about-headline em { font-style: italic; color: var(--saffron); }
+
+  .about-body {
+    color: var(--muted);
+    font-size: 0.97rem;
+    line-height: 1.85;
+    max-width: 500px;
+  }
+
+  .about-body p + p { margin-top: 1rem; }
+
+  .about-visual {
+    padding: 5rem 3rem;
+    background: var(--ink);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .quote-block {
+    border-left: 3px solid var(--saffron);
+    padding-left: 2rem;
+  }
+
+  .quote-text {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.6rem;
+    font-weight: 400;
+    font-style: italic;
+    color: var(--paper);
+    line-height: 1.5;
+    margin-bottom: 1.5rem;
+  }
+
+  .quote-attr {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--saffron-light);
+  }
+
+  /* ── CLASSROOM SECTION ── */
+  .classroom {
+    padding: 6rem 3rem;
+    background: var(--saffron-pale);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .classroom-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .classroom-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 2px;
+    margin-top: 3rem;
+  }
+
+  .classroom-card {
+    background: white;
+    padding: 2.5rem;
+    transition: transform 0.2s;
+  }
+
+  .classroom-card:hover { transform: translateY(-3px); }
+
+  .card-icon {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+  }
+
+  .card-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+  }
+
+  .card-body {
+    font-size: 0.9rem;
+    color: var(--muted);
+    line-height: 1.7;
+  }
+
+  /* ── BLOG ── */
+  .blog {
+    padding: 6rem 3rem;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .blog-grid {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr;
+    gap: 2px;
+    margin-top: 3rem;
+    border: 1px solid var(--border);
+  }
+
+  .blog-featured {
+    padding: 3rem;
+    border-right: 1px solid var(--border);
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .blog-featured:hover { background: var(--saffron-pale); }
+
+  .blog-side {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .blog-item {
+    padding: 2rem;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+    transition: background 0.2s;
+    flex: 1;
+  }
+
+  .blog-item:last-child { border-bottom: none; }
+  .blog-item:hover { background: var(--saffron-pale); }
+
+  .post-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.62rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--saffron);
+    margin-bottom: 0.75rem;
+  }
+
+  .post-title-lg {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.8rem;
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+    margin-bottom: 1rem;
+  }
+
+  .post-title-sm {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    line-height: 1.3;
+    margin-bottom: 0.5rem;
+  }
+
+  .post-excerpt {
+    font-size: 0.88rem;
+    color: var(--muted);
+    line-height: 1.65;
+  }
+
+  .post-meta {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.62rem;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    margin-top: 1.5rem;
+  }
+
+  /* ── COURSES ── */
+  .courses {
+    background: var(--ink);
+    padding: 5rem 3rem;
+    border-top: 2px solid var(--saffron);
+  }
+
+  .courses-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .courses .section-label { color: var(--saffron-light); }
+  .courses .section-label::after { background: #333; }
+
+  .courses-headline {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.8rem, 3vw, 2.8rem);
+    font-weight: 700;
+    color: var(--paper);
+    margin-bottom: 3rem;
+    letter-spacing: -0.02em;
+  }
+
+  .courses-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+    background: #333;
+  }
+
+  .course-card {
+    background: #1a1915;
+    padding: 2rem;
+    transition: background 0.2s;
+  }
+
+  .course-card:hover { background: #222118; }
+
+  .course-uni {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.62rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--saffron);
+    margin-bottom: 0.75rem;
+  }
+
+  .course-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--paper);
+    line-height: 1.3;
+    margin-bottom: 0.5rem;
+  }
+
+  .course-status {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #4caf50;
+  }
+
+  /* ── CONTACT / FOOTER ── */
+  footer {
+    background: var(--ink);
+    border-top: 1px solid #222;
+    padding: 4rem 3rem 2rem;
+  }
+
+  .footer-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1.5fr 1fr 1fr;
+    gap: 3rem;
+    padding-bottom: 3rem;
+    border-bottom: 1px solid #222;
+  }
+
+  .footer-brand {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem;
+    font-weight: 900;
+    color: var(--paper);
+    margin-bottom: 1rem;
+  }
+
+  .footer-brand span { color: var(--saffron); }
+
+  .footer-desc {
+    font-size: 0.85rem;
+    color: #666;
+    line-height: 1.7;
+    max-width: 280px;
+  }
+
+  .footer-col h4 {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--saffron);
+    margin-bottom: 1.2rem;
+  }
+
+  .footer-col ul { list-style: none; }
+
+  .footer-col ul li {
+    margin-bottom: 0.6rem;
+  }
+
+  .footer-col ul li a {
+    font-size: 0.85rem;
+    color: #888;
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .footer-col ul li a:hover { color: var(--saffron-light); }
+
+  .footer-bottom {
+    max-width: 1100px;
+    margin: 2rem auto 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .footer-copy {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.62rem;
+    letter-spacing: 0.08em;
+    color: #444;
+  }
+
+  .footer-location {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.62rem;
+    letter-spacing: 0.08em;
+    color: var(--saffron);
+  }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .reveal {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* ── MOBILE ── */
+  @media (max-width: 768px) {
+    nav { padding: 1rem 1.5rem; }
+    .nav-links { display: none; }
+    .hero { grid-template-columns: 1fr; }
+    .hero-right { border-top: 1px solid var(--border); }
+    .hero-left, .hero-right { padding: 3rem 1.5rem; }
+    .about-strip { grid-template-columns: 1fr; }
+    .about-text { padding: 3rem 1.5rem; }
+    .about-visual { padding: 3rem 1.5rem; }
+    .classroom-grid { grid-template-columns: 1fr; }
+    .classroom { padding: 4rem 1.5rem; }
+    .blog { padding: 4rem 1.5rem; }
+    .blog-grid { grid-template-columns: 1fr; }
+    .blog-featured { border-right: none; border-bottom: 1px solid var(--border); }
+    .courses-grid { grid-template-columns: 1fr 1fr; }
+    .courses { padding: 4rem 1.5rem; }
+    .footer-inner { grid-template-columns: 1fr; gap: 2rem; }
+    footer { padding: 3rem 1.5rem 1.5rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo">The <span>100 Rupees</span> Economist</a>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#classroom">Classroom</a></li>
+    <li><a href="#writing">Writing</a></li>
+    <li><a href="#courses">Courses</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-left">
+    <div class="hero-tag">Bihar, India · Economics · Education</div>
+    <h1 class="hero-title">
+      Economics<br/>
+      <em>from the</em><br/>
+      ground up.
+    </h1>
+    <p class="hero-sub">
+      I grew up where every rupee had a purpose. Now I write about the economics no textbook teaches — and run a free classroom for 30 kids the system forgot.
+    </p>
+    <div class="hero-cta">
+      <a href="#writing" class="btn-primary">Read the Blog</a>
+      <a href="#classroom" class="btn-ghost">The Classroom</a>
+    </div>
+  </div>
+
+  <div class="hero-right">
+    <div class="hero-stat">
+      <div class="stat-num">30</div>
+      <div class="stat-label">Students taught — free of charge</div>
+    </div>
+    <div class="hero-stat">
+      <div class="stat-num">2 yrs</div>
+      <div class="stat-label">Running the 100 Rupees Classroom</div>
+    </div>
+    <div class="hero-stat">
+      <div class="stat-num">4</div>
+      <div class="stat-label">University courses — Yale, Stanford, Columbia</div>
+    </div>
+    <div class="hero-stat">
+      <div class="stat-num">₹100</div>
+      <div class="stat-label">The unit that explains everything</div>
+    </div>
+  </div>
+</section>
+
+<!-- MARQUEE -->
+<div class="marquee-wrap">
+  <div class="marquee-track">
+    <span class="marquee-item">Opportunity Cost <span class="marquee-dot">◆</span></span>
+    <span class="marquee-item">Bihar Economics <span class="marquee-dot">◆</span></span>
+    <span class="marquee-item">Free Education <span class="marquee-dot">◆</span></span>
+    <span class="marquee-item">Shrinkflation <span class="marquee-dot">◆</span></span>
+    <span class="marquee-item">Street Vendors <span class="marquee-dot">◆</span></span>
+    <span class="marquee-item">Policy & Poverty <span class="marquee-dot">◆</span></span>
+    <span class="marquee-item">The 100 Rupees Classroom <span class="marquee-dot">◆</span></span>
+    <span class="marquee-item">Opportunity Cost <span class="marquue-dot">◆</span></span>
+    <span class="marquee-item">Bihar Economics <span class="marquee-dot">◆</span></span>
+    <span class="marquee-item">Free Education <span class="marquee-dot">◆</span></span>
+    <span class="marquee-item">Shrinkflation <span class="marquee-dot">◆</span></span>
+    <span class="marquee-item">Street Vendors <span class="marquee-dot">◆</span></span>
+    <span class="marquee-item">Policy & Poverty <span class="marquee-dot">◆</span></span>
+    <span class="marquee-item">The 100 Rupees Classroom <span class="marquee-dot">◆</span></span>
+  </div>
+</div>
+
+<!-- ABOUT -->
+<section class="about-strip" id="about">
+  <div class="about-text reveal">
+    <div class="section-label">About</div>
+    <h2 class="about-headline">
+      I didn't learn economics<br/>
+      in a classroom.<br/>
+      <em>I learned it surviving.</em>
+    </h2>
+    <div class="about-body">
+      <p>I'm Aman — a student from Bihar, India, belonging to a Scheduled Tribe community. I grew up in a home where the refrigerator was switched on only when necessary, where we slept on a mattress on the floor because we couldn't afford a bed, and where every rupee was accounted for before it was spent.</p>
+      <p>I didn't know the term "opportunity cost" then. But I was already living it. That curiosity turned into a blog, a classroom, and a commitment — to understand the systems that shape lives like mine, and eventually, to change them.</p>
+      <p>I write about the economics that happens outside lecture halls: in slum markets, in family budgets, in government school corridors where teachers never show up. Economics as it is actually lived — by the people it most affects.</p>
+    </div>
+  </div>
+
+  <div class="about-visual reveal">
+    <div class="quote-block">
+      <p class="quote-text">"My journey with economics didn't begin in a classroom — it began on the floor of a shared room, in a home where every rupee mattered."</p>
+      <div class="quote-attr">— Aman · The 100 Rupees Economist</div>
+    </div>
+  </div>
+</section>
+
+<!-- CLASSROOM -->
+<section class="classroom" id="classroom">
+  <div class="classroom-inner">
+    <div class="section-label">The 100 Rupees Classroom</div>
+    <h2 class="about-headline" style="font-family:'Playfair Display',serif; font-size:clamp(1.8rem,3vw,2.8rem); font-weight:700; line-height:1.15; letter-spacing:-0.02em; margin-bottom:0.5rem;">
+      A free classroom born from<br/><em>the system's failure.</em>
+    </h2>
+    <p style="color:var(--muted); font-size:0.95rem; max-width:560px; margin-top:0.5rem;">For two years, I've been teaching economics and business basics to 30 students aged 14–16 from Patna's low-income communities — most of them school dropouts or students in government schools with no functioning teachers.</p>
+
+    <div class="classroom-grid reveal">
+      <div class="classroom-card">
+        <div class="card-icon">📍</div>
+        <div class="card-title">Patna, Bihar</div>
+        <div class="card-body">Operating out of a community space serving students from low-income families and slum communities — the kids most likely to fall through the cracks.</div>
+      </div>
+      <div class="classroom-card">
+        <div class="card-icon">📚</div>
+        <div class="card-title">What We Teach</div>
+        <div class="card-body">Economics fundamentals, business basics, financial decision-making — concepts designed around real choices these students and their families face daily.</div>
+      </div>
+      <div class="classroom-card">
+        <div class="card-icon">🎯</div>
+        <div class="card-title">Why It Exists</div>
+        <div class="card-body">Because government schools in Bihar are failing. Because coaching costs money nobody has. Because someone has to show up — so I did.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BLOG -->
+<section class="blog" id="writing">
+  <div class="section-label">Writing</div>
+  <h2 style="font-family:'Playfair Display',serif; font-size:clamp(1.8rem,3vw,2.8rem); font-weight:700; letter-spacing:-0.02em; margin-bottom:0;">
+    Economics for people<br/>who've had to make hard choices.
+  </h2>
+
+  <div class="blog-grid reveal">
+    <div class="blog-featured" onclick="window.open('https://medium.com/@aman9666sjs/the-little-lesson-from-my-family-budget-that-made-me-love-economics-104a9738187c','_blank')" style="cursor:pointer;">
+      <div class="post-tag">Featured · Personal Essay</div>
+      <div class="post-title-lg">The Little Lesson From My Family Budget That Made Me Love Economics</div>
+      <p class="post-excerpt">I didn't know the word "opportunity cost" at the time, but I was already thinking about it. Every rupee saved on electricity meant a rupee that could go toward school fees or medicine for my grandmother...</p>
+      <div class="post-meta">The 100 Rupees Economist · Medium</div>
+    </div>
+
+    <div class="blog-side">
+      <div class="blog-item" onclick="window.open('https://medium.com/@aman9666sjs/why-street-vendors-understand-economics-better-than-you-think-405c33518707','_blank')" style="cursor:pointer;">
+        <div class="post-tag">Street Economics</div>
+        <div class="post-title-sm">Why Street Vendors Understand Economics Better Than You Think</div>
+        <div class="post-meta">Medium</div>
+      </div>
+      <div class="blog-item" onclick="window.open('https://medium.com/@aman9666sjs/why-free-isnt-free-the-unspoken-expenses-of-free-goods-c54ea66928b3','_blank')" style="cursor:pointer;">
+        <div class="post-tag">Hidden Costs</div>
+        <div class="post-title-sm">Why Free Isn't Free: The Unspoken Expenses of Free Goods</div>
+        <div class="post-meta">Medium</div>
+      </div>
+      <div class="blog-item" onclick="window.open('https://medium.com/@aman9666sjs/why-your-chips-pack-is-getting-smaller-but-still-costs-the-same-2777b9062527','_blank')" style="cursor:pointer;">
+        <div class="post-tag">Shrinkflation</div>
+        <div class="post-title-sm">Why Your Chips Pack Is Getting Smaller but Still Costs the Same</div>
+        <div class="post-meta">Medium</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- COURSES -->
+<section class="courses" id="courses">
+  <div class="courses-inner">
+    <div class="section-label">Self-Directed Study</div>
+    <h2 class="courses-headline">University-level economics.<br/>No institution required.</h2>
+
+    <div class="courses-grid reveal">
+      <div class="course-card">
+        <div class="course-uni">Yale University</div>
+        <div class="course-name">Financial Markets</div>
+        <div class="course-status">✓ Completed</div>
+      </div>
+      <div class="course-card">
+        <div class="course-uni">Yale University</div>
+        <div class="course-name">Narrative Economics</div>
+        <div class="course-status">✓ Completed</div>
+      </div>
+      <div class="course-card">
+        <div class="course-uni">Stanford University</div>
+        <div class="course-name">Introduction to Statistics</div>
+        <div class="course-status">✓ Completed</div>
+      </div>
+      <div class="course-card">
+        <div class="course-uni">Columbia University</div>
+        <div class="course-name">Economics of Money & Banking</div>
+        <div class="course-status">✓ Completed</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer id="contact">
+  <div class="footer-inner">
+    <div>
+      <div class="footer-brand">The <span>100 Rupees</span> Economist</div>
+      <p class="footer-desc">Writing about the economics that happens outside lecture halls — in slum markets, family budgets, and the spaces institutions forget. Bihar, India.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Writing</h4>
+      <ul>
+        <li><a href="https://medium.com/@aman9666sjs" target="_blank">Medium Blog</a></li>
+        <li><a href="#">YouTube Channel</a></li>
+        <li><a href="#">Latest Posts</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Connect</h4>
+      <ul>
+        <li><a href="#">Instagram</a></li>
+        <li><a href="https://medium.com/@aman9666sjs" target="_blank">Medium</a></li>
+        <li><a href="#">Email</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <div class="footer-copy">© 2025 The 100 Rupees Economist · Aman</div>
+    <div class="footer-location">📍 Patna, Bihar, India</div>
+  </div>
+</footer>
+
+<script>
+  // Scroll reveal
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.1 });
+  reveals.forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
